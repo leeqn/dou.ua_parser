@@ -1,23 +1,23 @@
 import pandas as pd
 from website import get_info
 from sort import skill_filter
-from sqlite3 import connect
+from sqlalchemy import create_engine, text
 
 def delete_table():
-    conn=connect('jobs.db')
-    cursor=conn.cursor()
-    cursor.execute("DELETE FROM vacancies")
-    cursor.execute("DELETE FROM sqlite_sequence WHERE name='vacancies'")
-    conn.commit()
-    conn.close()
+    engine = create_engine('postgresql://postgres:1234@localhost:5432/postgres')
+    with engine.connect() as connection:
+        query=text("""DROP TABLE vacancies;""")
+        connection.execute(query)
+        connection.commit()
+        connection.close()
 
-#interface
 url = "https://jobs.dou.ua/first-job/"
-
 get_info(url)
 
-conn=connect('jobs.db')
-jobs=pd.read_sql('SELECT id,Title,Link,Raw_Text,Company from vacancies', conn, index_col='id')
-jobs['Found_Skills'] = jobs['Raw_Text'].apply(skill_filter)
-print(jobs.head())
-jobs.to_csv('jobs.csv')
+engine = create_engine('postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres')
+with engine.connect() as connection:
+    query=text("""SELECT id,Title,Link,Raw_Text,Company from vacancies""")
+    jobs=pd.read_sql(query, connection, index_col='id')
+    jobs['Found_Skills'] = jobs['Raw_Text'].apply(skill_filter)
+    print(jobs.head())
+    jobs.to_csv('jobs.csv')
