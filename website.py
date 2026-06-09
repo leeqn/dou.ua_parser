@@ -1,16 +1,20 @@
 import requests
+from sort import skill_filter,conflict
 from sqlalchemy import create_engine, text
 from bs4 import BeautifulSoup
+import pandas as pd
 
-def get_info(url):
-    engine = create_engine('postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres')
+def get_info(url,postgres):
+    engine = create_engine(postgres)
+    jobs=[]
     with engine.connect() as connection:
 
         query=text('''CREATE TABLE IF NOT EXISTS vacancies (id SERIAL PRIMARY KEY,
                           Title TEXT Not NULL,
                           Company TEXT Not NULL,  
-                          Link TEXT Not NULL,
-                          Raw_Text TEXT)''')
+                          Link TEXT Not NULL UNIQUE,
+                          Raw_Text TEXT,
+                          found_skills TEXT)''')
 
         connection.execute(query)
         connection.commit()
@@ -45,10 +49,18 @@ def get_info(url):
                     company_name=l_n.find('a')
                     company = company_name.text.strip() if company_name else 'None'
 
-                    query=text("""INSERT INTO vacancies (title,company,link,raw_text)
-                                      VALUES (:title,:company,:href,:raw_text);""")
-                    connection.execute(query,{'title':title,'company':company,'href':href,'raw_text':raw_text})
-                    connection.commit()
+                    vacancy_dict = {
+                        "title": title,
+                        "company": company,
+                        "link": href,
+                        "raw_text": raw_text
+                    }
+                    jobs.append(vacancy_dict)
+
+            df=pd.DataFrame(jobs)
+            df['found_skills'] = df['raw_text'].apply(skill_filter)
                     #print(f"Saved {raw_text}")
+            df.to_sql('vacancies', con=engine, if_exists='append', index=False, method=conflict)
+            connection.commit()
         connection.close()
         print("DONE")
