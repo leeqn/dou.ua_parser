@@ -1,14 +1,25 @@
-from website import get_info
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
-
+from website import get_info
+ 
+load_dotenv()
+ 
+POSTGRES_URL = (
+    f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
+    f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+)
+TARGET_URL = os.getenv("TARGET_URL")
+ 
 def delete_table():
-    engine = create_engine('postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres')
+    print("Очищення старої таблиці...")
+    engine = create_engine(POSTGRES_URL)
     with engine.connect() as connection:
-        query=text("""DROP TABLE IF EXISTS vacancies;""")
+        query = text("""DROP TABLE IF EXISTS vacancies;""")
         connection.execute(query)
         connection.commit()
-        connection.close()
-delete_table()
-postgres='postgresql+psycopg2://postgres:1234@127.0.0.1:5432/postgres'
-url = "https://jobs.dou.ua/first-job/"
-get_info(url)
+ 
+if __name__ == "__main__":
+    delete_table()
+    get_info(TARGET_URL, POSTGRES_URL)
+    print("DONE")
