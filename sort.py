@@ -1,19 +1,19 @@
 from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 import pandas as pd
-from main import postgres
+from settings import postgres
+
+SKILL_KEYS = {'Python': ['python', 'numpy', 'sklearn', 'pandas'],
+              'SQL': ['sql', 'mysql', 'postgresql', 'бази даних'],
+              'Docker': ['docker'],
+              'Git': ['git'],
+              'Linux': ['linux'],
+              'Machine Learning': ['machine learning', 'ml', 'pytorch', 'tensorflow'],
+              'English': ['English', 'англійський', 'intermediate', 'знання англійської мови'],
+              'Degree': ['degree', 'освіта', 'повна вища технічна освіта'], }
 
 engine=create_engine(postgres)
 with engine.connect() as connection:
-    SKILL_KEYS  ={'Python':['python','numpy','sklearn','pandas'],
-            'SQL':['sql','mysql','postgresql','бази даних'],
-            'Docker':['docker'],
-            'Git':['git'],
-            'Linux':['linux'],
-            'Machine Learning':['machine learning','ml','pytorch','tensorflow'],
-            'English':['English','англійський','intermediate','знання англійської мови'],
-            'Degree':['degree','освіта','повна вища технічна освіта'],}
-
 
     vacancies = pd.read_sql("""SELECT id,title,link,raw_text,company from vacancies""", connection)
     connection.commit()
