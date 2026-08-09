@@ -5,6 +5,9 @@ __pycache__/
 .venv/
 venv/
 env/
+logs
+jobs.csv
+jobs.db
  
 # IDE
 .idea/
