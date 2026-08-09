@@ -7,4 +7,9 @@ main.py — The core pipeline orchestrator. Manages target URLs, handles data st
 website.py — The data extraction (scraping) module. Handles HTTP session headers, HTML tree parsing, raw DataFrame generation, and DB pipeline execution.
 sort.py — The analytical module. Contains the skill_filter text-parsing function and the custom conflict resolution utility for safe bulk operations.
 
-docker run --name postgres-local -e POSTGRES_PASSWORD=1234 -p 5432:5432 -d postgres
+git clone https://github.com/leeqn/dou.ua_parser.git
+cd dou.ua_parser
+docker-compose up -d
+
+postgresql://airflow:airflow@postgres:5432/airflow
+docker-compose exec postgres psql -U airflow -d airflow -c "SELECT COUNT(*) FROM vacancies;"
