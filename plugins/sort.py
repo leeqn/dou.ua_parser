@@ -38,10 +38,10 @@ def skill_filter(raw_text):
         if any(markers in text for markers in markers):
             founded_skills.append(skill)
 
-    if len(founded_skills)>0:
-        return ','.join(founded_skills)
-    else:
-        return 'not found'
+        if len(founded_skills)>0:
+            return ','.join(founded_skills)
+        else:
+            return 'not found'
 
     vacancies['found_skills'] = vacancies['raw_text'].apply(skill_filter)
 
