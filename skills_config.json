@@ -1,0 +1,156 @@
+{
+  "Python": [
+    "python",
+    "py"
+  ],
+  "Django / FastAPI / Flask": [
+    "django",
+    "fastapi",
+    "flask",
+    "aiohttp",
+    "starlette",
+    "tornado"
+  ],
+  "Asynchronous Python": [
+    "asyncio",
+    "celery",
+    "rabbit",
+    "rabbitmq",
+    "redis"
+  ],
+  "SQL & Databases": [
+    "sql",
+    "postgresql",
+    "postgres",
+    "mysql",
+    "sqlite",
+    "oracle",
+    "mssql",
+    "cockroachdb",
+    "бази даних",
+    "базы данных"
+  ],
+  "NoSQL": [
+    "nosql",
+    "mongodb",
+    "mongo",
+    "elasticsearch",
+    "elastic",
+    "dynamodb",
+    "cassandra"
+  ],
+  "ORM & DB Tools": [
+    "sqlalchemy",
+    "peewee",
+    "tortoise",
+    "alembic",
+    "prisma"
+  ],
+  "Docker & Containers": [
+    "docker",
+    "docker-compose",
+    "k8s",
+    "kubernetes",
+    "containerization"
+  ],
+  "DevOps & Cloud": [
+    "aws",
+    "amazon web services",
+    "gcp",
+    "google cloud",
+    "azure",
+    "ci/cd",
+    "github actions",
+    "gitlab ci",
+    "jenkins",
+    "terraform",
+    "ansible"
+  ],
+  "Git & VCS": [
+    "git",
+    "github",
+    "gitlab",
+    "bitbucket"
+  ],
+  "Linux & OS": [
+    "linux",
+    "ubuntu",
+    "debian",
+    "centos",
+    "bash",
+    "shell"
+  ],
+  "Data Science & ML": [
+    "machine learning",
+    "deep learning",
+    "ml",
+    "ai",
+    "numpy",
+    "pandas",
+    "scipy",
+    "sklearn",
+    "scikit-learn",
+    "pytorch",
+    "tensorflow",
+    "keras",
+    "opencv"
+  ],
+  "Data Engineering": [
+    "spark",
+    "pyspark",
+    "hadoop",
+    "kafka",
+    "airflow",
+    "dbt",
+    "clickhouse"
+  ],
+  "Testing & QA": [
+    "pytest",
+    "unittest",
+    "selenium",
+    "playwright",
+    "mock",
+    "tdd"
+  ],
+  "API & Protocols": [
+    "rest",
+    "restful",
+    "graphql",
+    "grpc",
+    "websockets",
+    "json",
+    "openapi",
+    "swagger"
+  ],
+  "Frontend Knowledge": [
+    "html",
+    "css",
+    "javascript",
+    "js",
+    "typescript",
+    "ts",
+    "react",
+    "vue"
+  ],
+  "English": [
+    "english",
+    "англійський",
+    "англійська",
+    "английский",
+    "intermediate",
+    "upper-intermediate",
+    "advanced",
+    "fluent"
+  ],
+  "Degree": [
+    "degree",
+    "освіта",
+    "образование",
+    "вища освіта",
+    "высшее образование",
+    "bachelor",
+    "master",
+    "computer science",
+    "cs"
+  ]
+}
