@@ -2,17 +2,20 @@ import asyncio
 import aiohttp
 from abc import ABC, abstractmethod
 import pandas as pd
-from sort import skill_filter, conflict
+from sort import skill_filter
 from typing import Optional
+import random
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7"
 }
 class BaseParser(ABC):
-    def __init__(self, engine, concurrency_limit=10):
-        self.engine=engine
-        self.semaphore = asyncio.Semaphore(concurrency_limit)
+    CONCURRENCY_LIMIT: int = 10
+    DELAY_RANGE: tuple[float, float] = (0.3, 0.7)
+
+    def __init__(self):
+        self.semaphore = asyncio.Semaphore(self.CONCURRENCY_LIMIT)
     @property
     @abstractmethod
     def source_name(self)->str:
@@ -31,7 +34,7 @@ class BaseParser(ABC):
 
     async def _fetch(self, session: aiohttp.ClientSession, url: str) -> Optional[str]:
         async with self.semaphore:
-            await asyncio.sleep(0.4)
+            await asyncio.sleep(random.uniform(*self.DELAY_RANGE))
             try:
                 async with session.get(url, headers=HEADERS, timeout=15) as response:
                     if response.status == 200:
@@ -72,12 +75,4 @@ class BaseParser(ABC):
 
         df = pd.DataFrame(jobs)
         df['found_skills'] = df['raw_text'].apply(skill_filter)
-
-        df.to_sql(
-            'vacancies',
-            con=self.engine,
-            index=False,
-            if_exists='append',
-            method=conflict
-        )
-        print(f"[{self.source_name}] saved {len(df)} vacancies.")
+        df.to_csv("vacancies.csv")
