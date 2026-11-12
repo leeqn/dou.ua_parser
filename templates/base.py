@@ -1,15 +1,11 @@
 import asyncio
-import aiohttp
 from abc import ABC, abstractmethod
 import pandas as pd
 from sort import skill_filter
 from typing import Optional
+from curl_cffi.requests import AsyncSession
 import random
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7"
-}
 class BaseParser(ABC):
     CONCURRENCY_LIMIT: int = 10
     DELAY_RANGE: tuple[float, float] = (0.3, 0.7)
@@ -32,20 +28,19 @@ class BaseParser(ABC):
         """Parse data from html"""
         pass
 
-    async def _fetch(self, session: aiohttp.ClientSession, url: str) -> Optional[str]:
+    async def _fetch(self, session: AsyncSession, url: str) -> Optional[str]:
         async with self.semaphore:
             await asyncio.sleep(random.uniform(*self.DELAY_RANGE))
             try:
-                async with session.get(url, headers=HEADERS, timeout=15) as response:
-                    if response.status == 200:
-                        return await response.text()
-                    else:
-                        print(f"[{self.source_name}] HTTP error {response.status} for {url}")
+                response = await session.get(url, timeout=15)
+                if response.status_code == 200:
+                    return response.text
+                print(f"[{self.source_name}] HTTP error {response.status_code} for {url}")
             except Exception as e:
-                print(f"[{self.source_name}] error {url}: {e}")
+                print(f"[{self.source_name}] Error {url}: {e}")
         return None
 
-    async def _process_single_vacancy(self, session: aiohttp.ClientSession, url: str)-> Optional[dict]:
+    async def _process_single_vacancy(self, session: AsyncSession, url: str)-> Optional[dict]:
         html = await self._fetch(session, url)
         if html:
             return self.parse_vacancy_page(html, url)
@@ -54,10 +49,9 @@ class BaseParser(ABC):
     async def run(self, start_url:str):
         """run cycle"""
         print(f"[{self.source_name}] start crawling {start_url}]")
-        async with aiohttp.ClientSession() as session:
+        async with AsyncSession(impersonate="safari") as session:
             main_html = await self._fetch(session, start_url)
             if not main_html:
-                print(f"[{self.source_name}] main html load error")
                 return
 
             urls=self.get_vacancy_urls(main_html)
@@ -75,4 +69,4 @@ class BaseParser(ABC):
 
         df = pd.DataFrame(jobs)
         df['found_skills'] = df['raw_text'].apply(skill_filter)
-        df.to_csv("vacancies.csv")
+        df.to_csv(f"vacancies_{self.source_name}.csv")
